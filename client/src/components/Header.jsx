@@ -12,7 +12,7 @@ export default function Header() {
             <span className="text-slate-700">Estate</span>
           </h1>
         </Link>
-        <form className="bg-slate-100 p-3 rounded-lg flex items-center w-24 sm:w-64">
+        <form className="bg-slate-100 p-3 rounded-lg flex items-center w-24 sm:w-64 justify-between">
           <input
             type="text"
             placeholder="Search..."
