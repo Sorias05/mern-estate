@@ -8,7 +8,17 @@ import {
   uploadBytesResumable,
 } from "firebase/storage";
 import { app } from "../firebase";
-import { updateUserStart, updateUserSuccess, updateUserFailure, deleteUserStart, deleteUserSuccess, deleteUserFailure } from "../redux/user/userSlice";
+import {
+  updateUserStart,
+  updateUserSuccess,
+  updateUserFailure,
+  deleteUserStart,
+  deleteUserSuccess,
+  deleteUserFailure,
+  signOutStart,
+  signOutSuccess,
+  signOutFailure,
+} from "../redux/user/userSlice";
 
 export default function Profile() {
   const fileRef = useRef(null);
@@ -75,7 +85,7 @@ export default function Profile() {
     } catch (error) {
       dispatch(updateUserFailure(error.message));
     }
-  }
+  };
 
   const handleDeleteUser = async () => {
     try {
@@ -89,11 +99,25 @@ export default function Profile() {
         return;
       }
       dispatch(deleteUserSuccess(data));
-      setUpdateSuccess(true);
     } catch (error) {
       dispatch(deleteUserFailure(error.message));
     }
-  }
+  };
+
+  const handleSignOut = async () => {
+    try {
+      dispatch(signOutStart());
+      const res = await fetch(`/api/auth/signout`);
+      const data = await res.json();
+      if (data.success === false) {
+        dispatch(signOutFailure(data.message));
+        return;
+      }
+      dispatch(signOutSuccess(data));
+    } catch (error) {
+      dispatch(signOutFailure(error.message));
+    }
+  };
 
   return (
     <div className="p-3 max-w-lg mx-auto">
@@ -114,7 +138,9 @@ export default function Profile() {
         />
         <p className="text-sm self-center">
           {fileUploadError ? (
-            <span className="text-red-700">Image upload error (image must be less than 2 mb)</span>
+            <span className="text-red-700">
+              Image upload error (image must be less than 2 mb)
+            </span>
           ) : filePerc > 0 && filePerc < 100 ? (
             <span className="text-slate-700">{`Uploading ${filePerc}%`}</span>
           ) : filePerc === 100 ? (
@@ -146,19 +172,27 @@ export default function Profile() {
           id="password"
           onChange={handleChange}
         />
-        <button disabled={loading} className="bg-slate-700 text-white rounded-lg p-3 uppercase hover:opacity-95 disabled:opacity-80">
+        <button
+          disabled={loading}
+          className="bg-slate-700 text-white rounded-lg p-3 uppercase hover:opacity-95 disabled:opacity-80"
+        >
           {loading ? "Loading..." : "Update"}
         </button>
       </form>
       <div className="flex justify-between mt-5">
-        <span onClick={handleDeleteUser} className="text-red-700 cursor-pointer">Delete account</span>
-        <span className="text-red-700 cursor-pointer">Sign out</span>
+        <span
+          onClick={handleDeleteUser}
+          className="text-red-700 cursor-pointer"
+        >
+          Delete account
+        </span>
+        <span onClick={handleSignOut} className="text-red-700 cursor-pointer">
+          Sign out
+        </span>
       </div>
+      <p className="text-red-700 mt-5">{error ? error : ""}</p>
       <p className="text-red-700 mt-5">
-        {error ? error : ''}
-      </p>
-      <p className="text-red-700 mt-5">
-        {updateSuccess ? 'User updated successfully!' : ''}
+        {updateSuccess ? "User updated successfully!" : ""}
       </p>
     </div>
   );
