@@ -20,6 +20,7 @@ import {
   signOutFailure,
 } from "../redux/user/userSlice";
 import { Link } from "react-router-dom";
+import Toast from "../components/Toast/Toast";
 
 export default function Profile() {
   const fileRef = useRef(null);
@@ -29,12 +30,21 @@ export default function Profile() {
   const [fileUploadError, setFileUploadError] = useState(false);
   const [formData, setFormData] = useState({});
   const [updateSuccess, setUpdateSuccess] = useState(false);
+  const [showListingsError, setShowListingsError] = useState(false);
+  const [showListings, setShowListings] = useState(false);
+  const [userListings, setUserListings] = useState([]);
+  const [toastData, setToastData] = useState({
+    show: false,
+    success: false,
+    message: "",
+  });
   const dispatch = useDispatch();
 
   useEffect(() => {
     if (file) {
       handleFileUpload(file);
     }
+    handleListingsLoad();
   }, [file]);
 
   const handleFileUpload = (file) => {
@@ -61,6 +71,40 @@ export default function Profile() {
     );
   };
 
+  const handleToastShow = (success, message) => {
+    if (toastData.show === true) {
+      setToastData({ ...toastData, show: false });
+      setTimeout(() => {
+        setToastData({
+          show: true,
+          message: message,
+          success: success,
+        });
+      }, 300);
+    } else {
+      setToastData({
+        show: true,
+        message: message,
+        success: success,
+      });
+    }
+  };
+
+  const handleListingsLoad = async () => {
+    try {
+      setShowListingsError(false);
+      const res = await fetch(`/api/user/listings/${currentUser._id}`);
+      const data = await res.json();
+      if (data.success === false) {
+        setShowListingsError(true);
+        return;
+      }
+      setUserListings(data);
+    } catch (error) {
+      setShowListingsError(true);
+    }
+  };
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
   };
@@ -79,10 +123,12 @@ export default function Profile() {
       const data = await res.json();
       if (data.success === false) {
         dispatch(updateUserFailure(data.message));
+        handleToastShow(false, "Something gone wrong");
         return;
       }
       dispatch(updateUserSuccess(data));
       setUpdateSuccess(true);
+      handleToastShow(true, "Your profile has been updated");
     } catch (error) {
       dispatch(updateUserFailure(error.message));
     }
@@ -119,6 +165,8 @@ export default function Profile() {
       dispatch(signOutFailure(error.message));
     }
   };
+
+  const handleListingDelete = (listingId) => {};
 
   return (
     <div className="p-3 max-w-lg mx-auto">
@@ -198,9 +246,65 @@ export default function Profile() {
         </span>
       </div>
       <p className="text-red-700 mt-5">{error ? error : ""}</p>
+      <button
+        onClick={() => setShowListings(!showListings)}
+        className="text-slate-700 w-full"
+      >
+        {showListings ? "Hide Listings" : "Show Listings"}
+      </button>
       <p className="text-red-700 mt-5">
-        {updateSuccess ? "User updated successfully!" : ""}
+        {showListingsError ? "Error showing listings" : ""}
       </p>
+      {showListings &&
+        userListings &&
+        (userListings.length > 0 ? (
+          <div className="flex flex-col gap-4">
+            <h1 className="text-center mt-7 text-2xl font-semibold">
+              Your Listings
+            </h1>
+            {userListings.map((listing) => (
+              <div
+                key={listing._id}
+                className="border rounded-lg p-3 flex justify-between items-center gap-4"
+              >
+                <Link to={`/listing/${listing._id}`}>
+                  <img
+                    src={listing.imageUrls[0]}
+                    alt="listing cover"
+                    className="h-16 w-16 object-contain"
+                  />
+                </Link>
+                <Link
+                  className="text-slate-700 font-semibold  hover:underline truncate flex-1"
+                  to={`/listing/${listing._id}`}
+                >
+                  <p>{listing.name}</p>
+                </Link>
+
+                <div className="flex flex-col item-center">
+                  <Link to={`/update-listing/${listing._id}`}>
+                    <button className="text-slate-700 uppercase">Edit</button>
+                  </Link>
+                  <button
+                    onClick={() => handleListingDelete(listing._id)}
+                    className="text-red-700 uppercase"
+                  >
+                    Delete
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="text-red-700 mt-5 text-center">You have no listings.</p>
+        ))}
+      <Toast
+        disabled={toastData.show}
+        show={toastData.show}
+        type={toastData.success ? "success" : "error"}
+        message={toastData.message}
+        onClose={() => setToastData({ ...toastData, show: false })}
+      />
     </div>
   );
 }
