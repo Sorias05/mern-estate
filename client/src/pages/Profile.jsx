@@ -74,11 +74,13 @@ export default function Profile() {
       const data = await res.json();
       if (data.success === false) {
         setShowListingsError(true);
+        showToast(false);
         return;
       }
       setUserListings(data);
     } catch (error) {
       setShowListingsError(true);
+      showToast(false);
     }
   };
 

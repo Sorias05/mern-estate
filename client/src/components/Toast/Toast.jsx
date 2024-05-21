@@ -7,7 +7,7 @@ const Toast = () => {
   const { toast, hideToast } = useToast();
 
   return (
-    <div className={`toast ${toast.show ? "active" : ""} bg-slate-100`}>
+    <div className={`toast ${toast.show ? "active" : ""} bg-slate-100 z-50`}>
       <div className="toast-content">
         {toast.success ? (document.querySelector(':root').style.setProperty('--bg-color', 'rgb(21 128 61)')) : (document.querySelector(':root').style.setProperty('--bg-color', 'rgb(185 28 28)'))}
         <i
