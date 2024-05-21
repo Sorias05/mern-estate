@@ -3,7 +3,7 @@
 }
 
 .toast {
-  position: absolute;
+  position: fixed;
   top: 85px;
   right: 15px;
   border-radius: 12px;

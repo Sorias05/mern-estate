@@ -163,13 +163,13 @@ export default function CreateListing() {
       setLoading(false);
       if (data.success === false) {
         setError(data.message);
-        showToast(false, "Something went wrong");
+        showToast(false);
       }
       showToast(true, "Listing created successfully");
       navigate(`/listing/${data._id}`);
     } catch (error) {
       setError(error.message);
-      showToast(false, "Something went wrong");
+      showToast(false);
       setLoading(false);
     }
   };

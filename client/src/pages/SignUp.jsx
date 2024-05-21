@@ -30,7 +30,7 @@ export default function SignUp() {
       if (data.success === false) {
         setLoading(false);
         setError(data.message);
-        showToast(false, "Something went wrong");
+        showToast(false);
         return;
       }
       setLoading(false);
@@ -40,6 +40,7 @@ export default function SignUp() {
     } catch (error) {
       setLoading(false);
       setError(error.message);
+      showToast(false);
     }
   };
 

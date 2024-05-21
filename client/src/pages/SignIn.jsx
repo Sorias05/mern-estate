@@ -31,7 +31,7 @@ export default function SignIn() {
       console.log(data);
       if (data.success === false) {
         dispatch(signInFailure(data.message));
-        showToast(false, "Something went wrong");
+        showToast(false);
         return;
       }
       dispatch(signInSuccess(data));
@@ -39,6 +39,7 @@ export default function SignIn() {
       navigate('/');
     } catch (error) {
       dispatch(signInFailure(error.message));
+      showToast(false);
     }
   };
 

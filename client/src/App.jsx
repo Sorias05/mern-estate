@@ -15,6 +15,7 @@ export default function App() {
     <BrowserRouter>
       <ToastProvider>
         <Header />
+        <Toast />
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/sign-in" element={<SignIn />} />
@@ -25,7 +26,6 @@ export default function App() {
             <Route path="/create-listing" element={<CreateListing />} />
           </Route>
         </Routes>
-        <Toast />
       </ToastProvider>
     </BrowserRouter>
   );

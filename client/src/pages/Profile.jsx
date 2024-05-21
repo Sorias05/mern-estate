@@ -100,7 +100,7 @@ export default function Profile() {
       const data = await res.json();
       if (data.success === false) {
         dispatch(updateUserFailure(data.message));
-        showToast(false, "Something went wrong");
+        showToast(false);
         return;
       }
       dispatch(updateUserSuccess(data));
@@ -108,6 +108,7 @@ export default function Profile() {
       showToast(true, "User updated successfully");
     } catch (error) {
       dispatch(updateUserFailure(error.message));
+      showToast(false);
     }
   };
 
@@ -120,13 +121,14 @@ export default function Profile() {
       const data = await res.json();
       if (data.success === false) {
         dispatch(deleteUserFailure(data.message));
-        showToast(false, "Something went wrong");
+        showToast(false);
         return;
       }
       dispatch(deleteUserSuccess(data));
       showToast(true, "User deleted successfully");
     } catch (error) {
       dispatch(deleteUserFailure(error.message));
+      showToast(false);
     }
   };
 
@@ -137,17 +139,35 @@ export default function Profile() {
       const data = await res.json();
       if (data.success === false) {
         dispatch(signOutFailure(data.message));
-        showToast(false, "Something went wrong");
+        showToast(false);
         return;
       }
       dispatch(signOutSuccess(data));
       showToast(true, "User logged out successfully");
     } catch (error) {
       dispatch(signOutFailure(error.message));
+      showToast(false);
     }
   };
 
-  const handleListingDelete = (listingId) => {};
+  const handleListingDelete = async (listingId) => {
+    try {
+      const res = await fetch(`/api/listing/delete/${listingId}`, {
+        method: 'DELETE',
+      });
+      const data = await res.json();
+      if (data.success === false) {
+        console.log(data.message);
+        showToast(false);
+        return;
+      }
+      setUserListings((prev) => prev.filter((listing) => listing._id !== listingId));
+      showToast(true, "Listing deleted successfully");
+    } catch(error) {
+      console.log(error.message);
+      showToast(false);
+    }
+  };
 
   return (
     <div className="p-3 max-w-lg mx-auto">

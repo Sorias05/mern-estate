@@ -16,6 +16,7 @@ export const ToastProvider = ({ children }) => {
   let timer;
 
   const showToast = (success, message) => {
+    if (!message) message = "Something went wrong..."
     if (toast.show === true) {
       hideToast(success, message);
       setTimeout(() => {
