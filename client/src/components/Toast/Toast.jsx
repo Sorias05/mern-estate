@@ -1,38 +1,28 @@
 import React, { useState, useEffect } from "react";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import "./index.css";
+import { useToast } from "../../redux/ToastProvider";
 
-const Toast = ({ show, message, type, onClose }) => {
-  useEffect(() => {
-    if (show) {
-      const timer1 = setTimeout(() => {
-        onClose();
-      }, 5000);
-
-      return () => {
-        clearTimeout(timer1);
-      };
-    }
-  }, [show, onClose]);
+const Toast = () => {
+  const { toast, hideToast } = useToast();
 
   return (
-    <div className={`toast ${show ? "active" : ""} bg-slate-100`}>
+    <div className={`toast ${toast.show ? "active" : ""} bg-slate-100`}>
       <div className="toast-content">
+        {toast.success ? (document.querySelector(':root').style.setProperty('--bg-color', 'rgb(21 128 61)')) : (document.querySelector(':root').style.setProperty('--bg-color', 'rgb(185 28 28)'))}
         <i
-          className={`fas fa-${
-            type === "success" ? "check" : "times"
-          } fa-check check`}
+          className={`fas fa-${toast.success ? "check" : "times"} check`}
         ></i>
         <div className="message">
           <span className="font-semibold">
-            {type === "success" ? "Success" : "Error"}
+            {toast.success ? "Success" : "Error"}
           </span>
-          <span className="block">{message}</span>
+          <span className="block">{toast.message}</span>
         </div>
       </div>
-      <i className="fa-solid fa-xmark close" onClick={onClose}></i>
+      <i className="fa-solid fa-xmark close" onClick={() => hideToast(toast.success, toast.message)}></i>
       <div
-        className={`progress ${show ? "active" : ""} ${show ? "" : "bg-white"}`}
+        className={`progress ${toast.show ? "active" : ""} ${toast.show ? "" : "bg-white"}`}
       ></div>
     </div>
   );

@@ -3,10 +3,12 @@ import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { signInStart, signInSuccess, signInFailure } from "../redux/user/userSlice";
 import OAuth from "../components/OAuth";
+import { useToast } from "../redux/ToastProvider";
 
 export default function SignIn() {
   const [formData, setFormData] = useState({});
   const { loading, error } = useSelector((state) => state.user);
+  const { showToast } = useToast();
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -29,9 +31,11 @@ export default function SignIn() {
       console.log(data);
       if (data.success === false) {
         dispatch(signInFailure(data.message));
+        showToast(false, "Something went wrong");
         return;
       }
       dispatch(signInSuccess(data));
+      showToast(true, "User signed in successfully");
       navigate('/');
     } catch (error) {
       dispatch(signInFailure(error.message));

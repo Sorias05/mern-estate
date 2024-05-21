@@ -8,6 +8,7 @@ import {
 import { app } from "../firebase";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { useToast } from "../redux/ToastProvider";
 
 export default function CreateListing() {
   const { currentUser } = useSelector((state) => state.user);
@@ -33,6 +34,7 @@ export default function CreateListing() {
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false);
+  const { showToast } = useToast();
 
   console.log(filePerc);
   console.log(formData);
@@ -60,13 +62,16 @@ export default function CreateListing() {
           });
           setImageUploadError(false);
           setUploading(false);
+          showToast(true, "Images uploaded successfully");
         })
         .catch((err) => {
           setImageUploadError("Image upload failed (2 mb max per image)");
+          showToast(false, "Image upload failed (2 mb max per image)");
           setUploading(false);
         });
     } else {
       setImageUploadError("You can only upload 6 images per listing");
+      showToast(false, "You can only upload 6 images per listing");
       setUploading(false);
     }
   };
@@ -102,6 +107,7 @@ export default function CreateListing() {
       imageUrls: formData.imageUrls.filter((_, i) => i !== index),
     });
     setFileNames(fileNames.filter((_, i) => i !== index));
+    showToast(true, "Image deleted successfully");
   };
 
   const handleChange = (e) => {
@@ -136,10 +142,14 @@ export default function CreateListing() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      if (formData.imageUrls.length < 1)
+      if (formData.imageUrls.length < 1) {
+        showToast(false, "You must upload at least one image!");
         return setError("You must upload at least one image!");
-      if (formData.regularPrice < formData.discountPrice)
+      }
+      if (formData.regularPrice < formData.discountPrice) {
+        showToast(false, "Discount price must be lower then regular price!");
         return setError("Discount price must be lower then regular price!");
+      }
       setLoading(true);
       setError(false);
       const res = await fetch("/api/listing/create", {
@@ -153,10 +163,13 @@ export default function CreateListing() {
       setLoading(false);
       if (data.success === false) {
         setError(data.message);
+        showToast(false, "Something went wrong");
       }
+      showToast(true, "Listing created successfully");
       navigate(`/listing/${data._id}`);
     } catch (error) {
       setError(error.message);
+      showToast(false, "Something went wrong");
       setLoading(false);
     }
   };
@@ -345,7 +358,7 @@ export default function CreateListing() {
               {uploading ? "Uploading..." : "Upload"}
             </button>
           </div>
-          <p className="text-red-700">{imageUploadError && imageUploadError}</p>
+          {/* <p className="text-red-700">{imageUploadError && imageUploadError}</p> */}
           {formData.imageUrls.length > 0 &&
             formData.imageUrls.map((url, index) => (
               <div
@@ -375,7 +388,7 @@ export default function CreateListing() {
           >
             {loading ? "Creating..." : "Create listing"}
           </button>
-          {error && <p className="text-red-700 text-sm">{error}</p>}
+          {/* {error && <p className="text-red-700 text-sm">{error}</p>} */}
         </div>
       </form>
     </main>

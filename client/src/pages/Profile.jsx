@@ -20,7 +20,7 @@ import {
   signOutFailure,
 } from "../redux/user/userSlice";
 import { Link } from "react-router-dom";
-import Toast from "../components/Toast/Toast";
+import { useToast } from "../redux/ToastProvider";
 
 export default function Profile() {
   const fileRef = useRef(null);
@@ -33,11 +33,7 @@ export default function Profile() {
   const [showListingsError, setShowListingsError] = useState(false);
   const [showListings, setShowListings] = useState(false);
   const [userListings, setUserListings] = useState([]);
-  const [toastData, setToastData] = useState({
-    show: false,
-    success: false,
-    message: "",
-  });
+  const { showToast } = useToast();
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -69,25 +65,6 @@ export default function Profile() {
         );
       }
     );
-  };
-
-  const handleToastShow = (success, message) => {
-    if (toastData.show === true) {
-      setToastData({ ...toastData, show: false });
-      setTimeout(() => {
-        setToastData({
-          show: true,
-          message: message,
-          success: success,
-        });
-      }, 300);
-    } else {
-      setToastData({
-        show: true,
-        message: message,
-        success: success,
-      });
-    }
   };
 
   const handleListingsLoad = async () => {
@@ -123,12 +100,12 @@ export default function Profile() {
       const data = await res.json();
       if (data.success === false) {
         dispatch(updateUserFailure(data.message));
-        handleToastShow(false, "Something gone wrong");
+        showToast(false, "Something went wrong");
         return;
       }
       dispatch(updateUserSuccess(data));
       setUpdateSuccess(true);
-      handleToastShow(true, "Your profile has been updated");
+      showToast(true, "User updated successfully");
     } catch (error) {
       dispatch(updateUserFailure(error.message));
     }
@@ -143,9 +120,11 @@ export default function Profile() {
       const data = await res.json();
       if (data.success === false) {
         dispatch(deleteUserFailure(data.message));
+        showToast(false, "Something went wrong");
         return;
       }
       dispatch(deleteUserSuccess(data));
+      showToast(true, "User deleted successfully");
     } catch (error) {
       dispatch(deleteUserFailure(error.message));
     }
@@ -158,9 +137,11 @@ export default function Profile() {
       const data = await res.json();
       if (data.success === false) {
         dispatch(signOutFailure(data.message));
+        showToast(false, "Something went wrong");
         return;
       }
       dispatch(signOutSuccess(data));
+      showToast(true, "User logged out successfully");
     } catch (error) {
       dispatch(signOutFailure(error.message));
     }
@@ -298,13 +279,6 @@ export default function Profile() {
         ) : (
           <p className="text-red-700 mt-5 text-center">You have no listings.</p>
         ))}
-      <Toast
-        disabled={toastData.show}
-        show={toastData.show}
-        type={toastData.success ? "success" : "error"}
-        message={toastData.message}
-        onClose={() => setToastData({ ...toastData, show: false })}
-      />
     </div>
   );
 }

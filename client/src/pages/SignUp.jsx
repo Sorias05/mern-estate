@@ -1,11 +1,13 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import OAuth from "../components/OAuth";
+import { useToast } from "../redux/ToastProvider";
 
 export default function SignUp() {
   const [formData, setFormData] = useState({});
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
+  const { showToast } = useToast();
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -28,10 +30,12 @@ export default function SignUp() {
       if (data.success === false) {
         setLoading(false);
         setError(data.message);
+        showToast(false, "Something went wrong");
         return;
       }
       setLoading(false);
       setError(null);
+      showToast(true, "User signed up successfully");
       navigate('/sign-in');
     } catch (error) {
       setLoading(false);
