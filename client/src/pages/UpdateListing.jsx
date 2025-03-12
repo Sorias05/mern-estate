@@ -37,16 +37,12 @@ export default function UpdateListing() {
   const [loading, setLoading] = useState(false);
   const { showToast } = useToast();
 
-  console.log(filePerc);
-  console.log(formData);
-
   useEffect(() => {
     const fetchListing = async () => {
       const listingId = params.id;
       const res = await fetch(`/api/listing/get/${listingId}`);
       const data = await res.json();
       if (data.success === false) {
-        console.log(data.message);
         return;
       }
       setFormData(data);
@@ -93,7 +89,7 @@ export default function UpdateListing() {
   const storageImage = async (file) => {
     return new Promise((resolve, reject) => {
       const storage = getStorage(app);
-      const fileName = new Date().getTime() + file.name;
+      const fileName = "estate/" + new Date().getTime() + file.name;
       const storageRef = ref(storage, fileName);
       const uploadTask = uploadBytesResumable(storageRef, file);
       uploadTask.on(
