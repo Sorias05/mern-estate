@@ -24,6 +24,7 @@ export default function SignUp() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(formData),
+        credentials: "include",
       });
       const data = await res.json();
       if (data.success === false) {
@@ -35,7 +36,7 @@ export default function SignUp() {
       setLoading(false);
       setError(null);
       showToast(true, "User signed up successfully");
-      navigate('/sign-in');
+      navigate("/sign-in");
     } catch (error) {
       setLoading(false);
       setError(error.message);

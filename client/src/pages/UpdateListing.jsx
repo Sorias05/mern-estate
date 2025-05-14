@@ -40,7 +40,9 @@ export default function UpdateListing() {
   useEffect(() => {
     const fetchListing = async () => {
       const listingId = params.id;
-      const res = await fetch(`/api/listing/get/${listingId}`);
+      const res = await fetch(`/api/listing/get/${listingId}`, {
+        credentials: "include",
+      });
       const data = await res.json();
       if (data.success === false) {
         return;
@@ -48,7 +50,7 @@ export default function UpdateListing() {
       setFormData(data);
     };
     fetchListing();
-  }, [])
+  }, []);
 
   const handleImageUpload = (e) => {
     if (files.length > 0 && files.length + formData.imageUrls.length < 7) {
@@ -168,6 +170,7 @@ export default function UpdateListing() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ ...formData, userRef: currentUser._id }),
+        credentials: "include",
       });
       const data = await res.json();
       setLoading(false);
@@ -381,7 +384,11 @@ export default function UpdateListing() {
                     alt="listing image"
                     className="w-20 h-20 object-contain rounded-lg"
                   />
-                  <p className="p-3 truncate max-w-60">{formData.imageNames[index] ? formData.imageNames[index] : "Loading..."}</p>
+                  <p className="p-3 truncate max-w-60">
+                    {formData.imageNames[index]
+                      ? formData.imageNames[index]
+                      : "Loading..."}
+                  </p>
                 </div>
                 <button
                   type="button"

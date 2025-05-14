@@ -154,6 +154,7 @@ export default function CreateListing() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ ...formData, userRef: currentUser._id }),
+        credentials: "include",
       });
       const data = await res.json();
       setLoading(false);
@@ -367,7 +368,11 @@ export default function CreateListing() {
                     alt="listing image"
                     className="w-20 h-20 object-contain rounded-lg"
                   />
-                  <p className="p-3 truncate max-w-60">{formData.imageNames[index] ? formData.imageNames[index] : "Loading..."}</p>
+                  <p className="p-3 truncate max-w-60">
+                    {formData.imageNames[index]
+                      ? formData.imageNames[index]
+                      : "Loading..."}
+                  </p>
                 </div>
                 <button
                   type="button"

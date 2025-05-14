@@ -28,11 +28,12 @@ export default function OAuth() {
           email: result.user.email,
           photo: result.user.photoURL,
         }),
+        credentials: "include",
       });
       const data = await res.json();
       dispatch(signInSuccess(data));
       showToast(true, "User signed in successfully");
-      navigate('/');
+      navigate("/");
     } catch (error) {
       console.log("Could not sign in with Google: ", error);
     }

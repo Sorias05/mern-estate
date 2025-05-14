@@ -70,7 +70,9 @@ export default function Profile() {
   const handleListingsLoad = async () => {
     try {
       setShowListingsError(false);
-      const res = await fetch(`/api/user/listings/${currentUser._id}`);
+      const res = await fetch(`/api/user/listings/${currentUser._id}`, {
+        credentials: "include",
+      });
       const data = await res.json();
       if (data.success === false) {
         setShowListingsError(true);
@@ -98,6 +100,7 @@ export default function Profile() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(formData),
+        credentials: "include",
       });
       const data = await res.json();
       if (data.success === false) {
@@ -119,6 +122,7 @@ export default function Profile() {
       dispatch(deleteUserStart());
       const res = await fetch(`/api/user/delete/${currentUser._id}`, {
         method: "DELETE",
+        credentials: "include",
       });
       const data = await res.json();
       if (data.success === false) {
@@ -137,7 +141,7 @@ export default function Profile() {
   const handleSignOut = async () => {
     try {
       dispatch(signOutStart());
-      const res = await fetch(`/api/auth/signout`);
+      const res = await fetch(`/api/auth/signout`, { credentials: "include" });
       const data = await res.json();
       if (data.success === false) {
         dispatch(signOutFailure(data.message));
@@ -155,7 +159,8 @@ export default function Profile() {
   const handleListingDelete = async (listingId) => {
     try {
       const res = await fetch(`/api/listing/delete/${listingId}`, {
-        method: 'DELETE',
+        method: "DELETE",
+        credentials: "include",
       });
       const data = await res.json();
       if (data.success === false) {
@@ -163,9 +168,11 @@ export default function Profile() {
         showToast(false);
         return;
       }
-      setUserListings((prev) => prev.filter((listing) => listing._id !== listingId));
+      setUserListings((prev) =>
+        prev.filter((listing) => listing._id !== listingId)
+      );
       showToast(true, "Listing deleted successfully");
-    } catch(error) {
+    } catch (error) {
       console.log(error.message);
       showToast(false);
     }

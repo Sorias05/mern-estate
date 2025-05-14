@@ -1,7 +1,11 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { signInStart, signInSuccess, signInFailure } from "../redux/user/userSlice";
+import {
+  signInStart,
+  signInSuccess,
+  signInFailure,
+} from "../redux/user/userSlice";
 import OAuth from "../components/OAuth";
 import { useToast } from "../redux/ToastProvider";
 
@@ -26,6 +30,7 @@ export default function SignIn() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(formData),
+        credentials: "include",
       });
       const data = await res.json();
       if (data.success === false) {
@@ -35,7 +40,7 @@ export default function SignIn() {
       }
       dispatch(signInSuccess(data));
       showToast(true, "User signed in successfully");
-      navigate('/');
+      navigate("/");
     } catch (error) {
       dispatch(signInFailure(error.message));
       showToast(false);
