@@ -1,7 +1,3 @@
----
-title: "**📘 MyEstate**"
----
-
 # Overview
 
 [**MyEstate**](https://mern-estate-gvzy.onrender.com) is a full-stack
