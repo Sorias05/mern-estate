@@ -66,7 +66,7 @@ Node.js.
 npm install
 ```
 **2. Configure Environment Variables:**  
-Create a \`.env\` file in the backend directory and add:
+Create a \`.env\` file in the root directory and add:
 ```
 JWT_SECRET=\"\"  
 MONGO=\"\"  
@@ -87,7 +87,7 @@ cd client
 npm install
 ```
 **3. Configure Environment Variables:**  
-Create a \`.env\` file in the backend directory and add:
+Create a \`.env\` file in the client directory and add:
 ```
 VITE_FIREBASE_API_KEY=\"\"
 ```
