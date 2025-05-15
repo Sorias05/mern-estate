@@ -68,9 +68,9 @@ npm install
 **2. Configure Environment Variables:**  
 Create a \`.env\` file in the root directory and add:
 ```
-JWT_SECRET=\"\"  
-MONGO=\"\"  
-PORTFOLIO=\"\"
+JWT_SECRET=""  
+MONGO=""  
+PORTFOLIO=""
 ```
 **3. Start the Server:**
 ```
@@ -89,7 +89,7 @@ npm install
 **3. Configure Environment Variables:**  
 Create a \`.env\` file in the client directory and add:
 ```
-VITE_FIREBASE_API_KEY=\"\"
+VITE_FIREBASE_API_KEY=""
 ```
 **4. Start the React Application:**
 ```
